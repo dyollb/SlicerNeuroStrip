@@ -16,12 +16,35 @@ from slicer.parameterNodeWrapper import (
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
-try:
-    import neurostrip
-except ImportError:
-    slicer.util.pip_install("neurostrip[cpu]")
-    import neurostrip
 
+#
+# Dependencies
+#
+
+
+def checkPythonDependencies() -> bool:
+    try:
+        from neurostrip import predict
+    except ImportError:
+        return False
+    return True
+
+
+def installPythonDependencies() -> None:
+    msg = "Extra python packages (neurostrip and onnxruntime) are required."
+    msg += "\nClick OK to install them for NeuroStrip."
+    if not slicer.util.confirmOkCancelDisplay(msg):
+        logging.info('Installation of neurostrip aborted by user')
+        return
+    slicer.util.pip_install("neurostrip[cpu]")
+    
+    msg = "A restart is required"
+    msg += "\nClick OK to restart 3D Slicer"
+    if not slicer.util.confirmOkCancelDisplay(msg):
+        logging.info('Restart of 3D Slicer aborted by user')
+        return
+    slicer.util.restart()
+        
 
 #
 # NeuroStrip
@@ -29,10 +52,6 @@ except ImportError:
 
 
 class NeuroStrip(ScriptedLoadableModule):
-    """Uses ScriptedLoadableModule base class, available at:
-    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
-    """
-
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = _("NeuroStrip")
@@ -111,10 +130,6 @@ class NeuroStripParameterNode:
 
 
 class NeuroStripWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
-    """Uses ScriptedLoadableModuleWidget base class, available at:
-    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
-    """
-
     def __init__(self, parent=None) -> None:
         """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.__init__(self, parent)
@@ -122,6 +137,7 @@ class NeuroStripWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.logic = None
         self._parameterNode = None
         self._parameterNodeGuiTag = None
+        self._dependenciesInstalled = False
 
     def setup(self) -> None:
         """Called when the user opens the module the first time and the widget is initialized."""
@@ -171,6 +187,12 @@ class NeuroStripWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """Called each time the user opens this module."""
         # Make sure parameter node exists and observed
         self.initializeParameterNode()
+        
+        # Make sure dependencies are installed
+        if not self._dependenciesInstalled:
+            self._dependenciesInstalled = checkPythonDependencies()
+            if not self._dependenciesInstalled:
+                installPythonDependencies()
 
     def exit(self) -> None:
         """Called each time the user opens a different module."""
@@ -264,15 +286,6 @@ class NeuroStripWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
 
 class NeuroStripLogic(ScriptedLoadableModuleLogic):
-    """This class should implement all the actual
-    computation done by this module.  The interface
-    should be such that other python code can import
-    this class and make use of the functionality without
-    requiring an instance of the Widget.
-    Uses ScriptedLoadableModuleLogic base class, available at:
-    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
-    """
-
     def __init__(self) -> None:
         """Called when the logic class is instantiated. Can be used for initializing member variables."""
         ScriptedLoadableModuleLogic.__init__(self)
@@ -293,7 +306,6 @@ class NeuroStripLogic(ScriptedLoadableModuleLogic):
         :param outputMask: brain mask result
         :param outputMaskedVolume: masked brain volume result (optional)
         """
-
         if not inputVolume or not outputMask:
             raise ValueError("Input volume and output mask are required")
 
@@ -315,7 +327,9 @@ class NeuroStripLogic(ScriptedLoadableModuleLogic):
 
             # Run NeuroStrip prediction
             try:
-                neurostrip.lib.predict(
+                import neurostrip
+
+                neurostrip.predict(
                     image_path=input_path,
                     mask_path=mask_path,
                     masked_image_path=masked_path,
@@ -364,12 +378,6 @@ class NeuroStripLogic(ScriptedLoadableModuleLogic):
 
 
 class NeuroStripTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    Uses ScriptedLoadableModuleTest base class, available at:
-    https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
-    """
-
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear()
@@ -388,8 +396,6 @@ class NeuroStripTest(ScriptedLoadableModuleTest):
         registerSampleData()
         inputVolume = SampleData.downloadSample("NeuroStrip1")
         self.delayDisplay("Loaded test data set")
-
-        inputScalarRange = inputVolume.GetImageData().GetScalarRange()
 
         # Test the module logic
         logic = NeuroStripLogic()
