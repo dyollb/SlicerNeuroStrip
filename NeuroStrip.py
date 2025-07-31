@@ -413,6 +413,6 @@ class NeuroStripTest(ScriptedLoadableModuleTest):
 
         outputScalarRange = outputMaskedVolume.GetImageData().GetScalarRange()
         self.assertEqual(outputScalarRange[0], 0)
-        self.assertEqual(outputScalarRange[1], 605)
+        self.assertEqual(outputScalarRange[1], 605)  # Maximum value in mask
 
         self.delayDisplay("Test passed")
