@@ -137,6 +137,7 @@ class NeuroStripWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.logic = None
         self._parameterNode = None
         self._parameterNodeGuiTag = None
+        self._dependenciesInstalled = False
 
     def setup(self) -> None:
         """Called when the user opens the module the first time and the widget is initialized."""
@@ -188,8 +189,10 @@ class NeuroStripWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.initializeParameterNode()
         
         # Make sure dependencies are installed
-        if not checkPythonDependencies():
-            installPythonDependencies()
+        if not self._dependenciesInstalled:
+            self._dependenciesInstalled = checkPythonDependencies()
+            if not self._dependenciesInstalled:
+                installPythonDependencies()
 
     def exit(self) -> None:
         """Called each time the user opens a different module."""
@@ -326,7 +329,7 @@ class NeuroStripLogic(ScriptedLoadableModuleLogic):
             try:
                 import neurostrip
 
-                neurostrip.lib.predict(
+                neurostrip.predict(
                     image_path=input_path,
                     mask_path=mask_path,
                     masked_image_path=masked_path,
