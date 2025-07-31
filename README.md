@@ -30,7 +30,7 @@ This extension provides CNN-based skull stripping (brain masking) from MRI using
 
 ### Dependencies
 
-The plugin will automatically install the NeuroStrip library when first loaded. However, you can also install it manually:
+The plugin will automatically install the NeuroStrip library ([see pyproject.toml](https://github.com/dyollb/neurostrip/blob/main/pyproject.toml)) when first loaded. However, you can also install it manually:
 
 For CPU support:
 ```bash
@@ -60,17 +60,6 @@ pip install neurostrip[gpu]
    - Click the `Apply` button
    - The processing will take some time depending on the volume size and device
    - Results will be displayed in the 3D viewer
-
-## File Structure
-
-```
-slicer_plugin/
-├── NeuroStrip.py              # Main plugin module
-└── Resources/
-    ├── Icons/                 # Plugin icons
-    └── UI/
-        └── NeuroStrip.ui      # User interface definition
-```
 
 ## Contributing
 
