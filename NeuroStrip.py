@@ -39,7 +39,7 @@ class NeuroStrip(ScriptedLoadableModule):
         self.parent.categories = [
             translate("qSlicerAbstractCoreModule", "Segmentation")
         ]
-        self.parent.dependencies = ["Segmentations"]
+        self.parent.dependencies = []
         self.parent.contributors = ["Bryn Lloyd (Slicer Community)"]
         self.parent.helpText = _("""
 This module provides CNN-based skull stripping (brain masking) from MRI using the NeuroStrip library.
