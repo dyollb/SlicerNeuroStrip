@@ -37,13 +37,6 @@ def installPythonDependencies() -> None:
         logging.info('Installation of neurostrip aborted by user')
         return
     slicer.util.pip_install("neurostrip[cpu]")
-    
-    msg = "A restart is required"
-    msg += "\nClick OK to restart 3D Slicer"
-    if not slicer.util.confirmOkCancelDisplay(msg):
-        logging.info('Restart of 3D Slicer aborted by user')
-        return
-    slicer.util.restart()
         
 
 #
