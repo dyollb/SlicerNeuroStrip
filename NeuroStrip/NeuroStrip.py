@@ -10,9 +10,7 @@ import slicer
 import vtk
 from slicer.i18n import tr as _
 from slicer.i18n import translate
-from slicer.parameterNodeWrapper import (
-    parameterNodeWrapper,
-)
+from slicer.parameterNodeWrapper import parameterNodeWrapper
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
