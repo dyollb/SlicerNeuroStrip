@@ -8,8 +8,8 @@ set(EXTENSION_HOMEPAGE "https://github.com/dyollb/SlicerNeuroStrip")
 set(EXTENSION_CATEGORY "Segmentation")
 set(EXTENSION_CONTRIBUTORS "Bryn Lloyd (Slicer Community)")
 set(EXTENSION_DESCRIPTION "CNN based skull stripping (brain masking) from MRI using the NeuroStrip library")
-set(EXTENSION_ICONURL "https://raw.githubusercontent.com/dyollb/SlicerNeuroStrip/main/Resources/Icons/NeuroStrip.png")
-set(EXTENSION_SCREENSHOTURLS "https://raw.githubusercontent.com/dyollb/SlicerNeuroStrip/main/Resources/Icons/NeuroStrip1.png")
+set(EXTENSION_ICONURL "https://raw.githubusercontent.com/dyollb/SlicerNeuroStrip/main/NeuroStrip/Resources/Icons/NeuroStrip.png")
+set(EXTENSION_SCREENSHOTURLS "https://raw.githubusercontent.com/dyollb/SlicerNeuroStrip/main/NeuroStrip/Resources/Icons/NeuroStrip1.png")
 set(EXTENSION_DEPENDS "")
 
 #-----------------------------------------------------------------------------
